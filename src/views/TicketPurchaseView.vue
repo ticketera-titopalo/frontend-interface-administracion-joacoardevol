@@ -1,14 +1,20 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { getConcertById, getConcertValue } from '../api/concerts'
+import { createPurchase, PurchaseError } from '../api/purchases'
+import { useAuthStore } from '../store/auth'
 
 const route = useRoute()
+const router = useRouter()
+const auth = useAuthStore()
 const concert = ref(null)
 const loading = ref(true)
 const error = ref('')
 const quantity = ref(1)
-const completed = ref(false)
+const purchaseError = ref('')
+const submitting = ref(false)
+const demoMode = import.meta.env.VITE_DEMO_MODE === 'true'
 
 const stock = computed(() => Number(getConcertValue(concert.value, 'availableStock', 'available_stock', 'stockAvailable', 'stock_available', 'stock') ?? 0))
 const price = computed(() => Number(getConcertValue(concert.value, 'price', 'ticketPrice', 'ticket_price') ?? 0))
@@ -29,8 +35,41 @@ async function loadConcert() {
   }
 }
 
-function confirmPurchase() {
-  completed.value = true
+async function confirmPurchase() {
+  purchaseError.value = ''
+
+  if (quantity.value < 1 || quantity.value > stock.value) {
+    purchaseError.value = `Stock insuficiente. Quedan ${stock.value} entradas disponibles.`
+    return
+  }
+
+  const userId = auth.user?.id ?? auth.user?._id
+  if (userId === undefined || userId === null) {
+    purchaseError.value = 'No se encontró el usuario de la sesión. Vuelve a iniciar sesión.'
+    return
+  }
+
+  submitting.value = true
+  try {
+    const purchase = await createPurchase({
+      concert_id: concert.value.id ?? concert.value._id ?? route.params.concertId,
+      quantity: quantity.value,
+      user_id: userId,
+    })
+    await router.replace({
+      name: 'purchase-success',
+      params: { purchaseId: purchase.id ?? purchase._id ?? 'confirmada' },
+      query: { concertId: route.params.concertId, quantity: String(quantity.value) },
+    })
+  } catch (purchaseFailure) {
+    if (purchaseFailure instanceof PurchaseError && purchaseFailure.type === 'stock') {
+      purchaseError.value = 'Stock insuficiente. Actualiza la página para consultar la disponibilidad actual.'
+    } else {
+      purchaseError.value = purchaseFailure.message ?? 'No se pudo completar la compra.'
+    }
+  } finally {
+    submitting.value = false
+  }
 }
 
 onMounted(loadConcert)
@@ -42,29 +81,23 @@ onMounted(loadConcert)
     <div v-if="loading" class="purchase-card message">Cargando compra…</div>
     <div v-else-if="error" class="purchase-card message error" role="alert">{{ error }}</div>
     <article v-else-if="concert" class="purchase-card">
-      <template v-if="completed">
-        <div class="confirmation-icon">✓</div>
-        <p class="eyebrow">DEMO</p>
-        <h1>Compra simulada</h1>
-        <p class="intro">Se reservaron {{ quantity }} entradas para {{ getConcertValue(concert, 'title', 'name') }}.</p>
-        <RouterLink class="primary-button" to="/concerts">Volver a conciertos</RouterLink>
-      </template>
-      <template v-else>
-        <p class="eyebrow">COMPRA DE ENTRADAS</p>
-        <h1>{{ getConcertValue(concert, 'title', 'name') }}</h1>
-        <p class="intro">{{ getConcertValue(concert, 'date', 'eventDate', 'event_date') ?? 'Fecha por confirmar' }} · {{ getConcertValue(concert, 'venue', 'location', 'place') ?? 'Lugar por confirmar' }}</p>
-        <div class="purchase-summary">
-          <div><span>Precio por entrada</span><strong>{{ formatPrice(price) }}</strong></div>
-          <div><span>Disponibles</span><strong>{{ stock }}</strong></div>
-        </div>
-        <label for="quantity">Cantidad de entradas</label>
-        <select id="quantity" v-model.number="quantity" :disabled="stock === 0">
-          <option v-for="count in Math.min(stock, 6)" :key="count" :value="count">{{ count }}</option>
-        </select>
-        <div class="total-line"><span>Total</span><strong>{{ formatPrice(total) }}</strong></div>
-        <p class="demo-note">Modo demostración: esta compra no genera un cobro real.</p>
-        <button class="primary-button" type="button" :disabled="stock === 0" @click="confirmPurchase">{{ stock === 0 ? 'Sin stock disponible' : 'Confirmar compra simulada' }}</button>
-      </template>
+      <p class="eyebrow">COMPRA DE ENTRADAS</p>
+      <h1>{{ getConcertValue(concert, 'title', 'name') }}</h1>
+      <p class="intro">{{ getConcertValue(concert, 'date', 'eventDate', 'event_date') ?? 'Fecha por confirmar' }} · {{ getConcertValue(concert, 'venue', 'location', 'place') ?? 'Lugar por confirmar' }}</p>
+      <div class="purchase-summary">
+        <div><span>Precio por entrada</span><strong>{{ formatPrice(price) }}</strong></div>
+        <div><span>Disponibles</span><strong>{{ stock }}</strong></div>
+      </div>
+      <label for="quantity">Cantidad de entradas</label>
+      <select id="quantity" v-model.number="quantity" :disabled="stock === 0 || submitting">
+        <option v-for="count in Math.min(stock, 6)" :key="count" :value="count">{{ count }}</option>
+      </select>
+      <div class="total-line"><span>Total</span><strong>{{ formatPrice(total) }}</strong></div>
+      <p v-if="demoMode" class="demo-note">Modo demostración: esta compra actualiza el stock local, sin generar un cobro real.</p>
+      <p v-if="purchaseError" class="purchase-error" role="alert">{{ purchaseError }}</p>
+      <button class="primary-button" type="button" :disabled="stock === 0 || submitting" @click="confirmPurchase">
+        {{ stock === 0 ? 'Sin stock disponible' : submitting ? 'Procesando compra…' : 'Confirmar compra' }}
+      </button>
     </article>
   </section>
 </template>
@@ -85,6 +118,7 @@ select { width: 100%; height: 2.6rem; padding: 0 0.65rem; border: 1px solid #d8d
 .total-line { display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #edf0f4; color: #647187; font-size: 0.82rem; }
 .total-line strong { color: #26344e; font-size: 1rem; }
 .demo-note { margin: 0.9rem 0 0; color: #806327; font-size: 0.72rem; }
+.purchase-error { margin: 0.9rem 0 0; color: #a64b4b; font-size: 0.76rem; }
 .primary-button { display: inline-flex; min-height: 2.7rem; align-items: center; justify-content: center; margin-top: 1.1rem; padding: 0 1rem; border: 0; border-radius: 5px; color: #fff; background: #425fca; font: inherit; font-size: 0.78rem; font-weight: 600; text-decoration: none; cursor: pointer; }
 .primary-button:hover:not(:disabled) { background: #344fae; }
 .primary-button:disabled { opacity: 0.6; cursor: not-allowed; }
