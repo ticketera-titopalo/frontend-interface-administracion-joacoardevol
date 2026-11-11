@@ -45,6 +45,12 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'Usuarios', description: 'Consulta las cuentas registradas.', subject: 'los usuarios' },
     },
     {
+      path: '/tickets/purchase/:concertId',
+      name: 'ticket-purchase',
+      component: () => import('../views/TicketPurchaseView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/tickets',
       name: 'tickets',
       component: () => import('../views/SectionView.vue'),
