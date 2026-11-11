@@ -45,6 +45,18 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'Usuarios', description: 'Consulta las cuentas registradas.', subject: 'los usuarios' },
     },
     {
+      path: '/perfil',
+      name: 'profile',
+      component: () => import('../views/ProfileView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/cambiar-password',
+      name: 'change-password',
+      component: () => import('../views/ChangePasswordView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/purchases/:purchaseId',
       name: 'purchase-success',
       component: () => import('../views/PurchaseSuccessView.vue'),
@@ -59,8 +71,8 @@ const router = createRouter({
     {
       path: '/tickets',
       name: 'tickets',
-      component: () => import('../views/SectionView.vue'),
-      meta: { requiresAuth: true, title: 'Tickets', description: 'Revisa las ventas de tickets.', subject: 'los tickets' },
+      component: () => import('../views/TicketsView.vue'),
+      meta: { requiresAuth: true },
     },
   ],
 })

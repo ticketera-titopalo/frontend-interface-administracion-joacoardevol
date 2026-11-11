@@ -33,7 +33,18 @@ function logout() {
     <div class="workspace">
       <header class="topbar">
         <div class="topbar-context"><span class="context-label">ESPACIO DE TRABAJO</span><strong>Panel de administración</strong></div>
-        <div class="account"><span class="avatar">{{ (auth.user?.name ?? auth.user?.email ?? 'A').charAt(0).toUpperCase() }}</span><span class="account-name">{{ auth.user?.name ?? 'Administrador' }}<small>Administrador</small></span></div>
+        <details class="user-menu">
+          <summary class="account">
+            <img v-if="auth.user?.photo || auth.user?.avatar || auth.user?.avatar_url || auth.user?.profile_image" class="avatar user-photo" :src="auth.user.photo ?? auth.user.avatar ?? auth.user.avatar_url ?? auth.user.profile_image" alt="Foto de perfil" />
+            <span v-else class="avatar">{{ (auth.user?.name ?? auth.user?.email ?? 'A').charAt(0).toUpperCase() }}</span>
+            <span class="account-name">{{ auth.user?.name ?? 'Administrador' }}<small>Mi cuenta</small></span>
+            <span class="menu-chevron" aria-hidden="true">⌄</span>
+          </summary>
+          <nav class="user-dropdown" aria-label="Menú de usuario">
+            <RouterLink to="/perfil">Mi perfil</RouterLink>
+            <RouterLink to="/cambiar-password">Cambiar contraseña</RouterLink>
+          </nav>
+        </details>
       </header>
       <main class="page-content"><RouterView /></main>
     </div>
@@ -69,6 +80,15 @@ button, a { font: inherit; }
 .avatar { display: grid; width: 2.2rem; height: 2.2rem; place-items: center; border: 2px solid #edf0ff; border-radius: 50%; color: #455fcb; background: #e9edff; font-size: 0.78rem; font-weight: 700; }
 .account-name { display: grid; gap: 0.1rem; font-size: 0.76rem; font-weight: 600; }
 .account-name small { color: #909bad; font-size: 0.65rem; font-weight: 400; }
+.user-menu { position: relative; }
+.user-menu summary { list-style: none; cursor: pointer; }
+.user-menu summary::-webkit-details-marker { display: none; }
+.user-menu summary:focus-visible { outline: 2px solid #7387dc; outline-offset: 4px; border-radius: 4px; }
+.user-photo { object-fit: cover; }
+.menu-chevron { margin-left: 0.1rem; color: #8994a6; font-size: 0.9rem; }
+.user-dropdown { position: absolute; top: calc(100% + 0.65rem); right: 0; z-index: 5; display: grid; min-width: 190px; padding: 0.35rem; border: 1px solid #e5e9f0; border-radius: 7px; background: white; box-shadow: 0 10px 30px #1827431c; }
+.user-dropdown a { padding: 0.65rem 0.7rem; border-radius: 4px; color: #475469; font-size: 0.76rem; text-decoration: none; }
+.user-dropdown a:hover, .user-dropdown a.router-link-active { color: #425fca; background: #f1f3fc; }
 .page-content { max-width: 1500px; margin: 0 auto; padding: 2.3rem 2.65rem; }
 @media (max-width: 760px) { .sidebar { width: 68px; align-items: center; padding: 1.2rem 0.45rem 0.8rem; } .brand { padding: 0 0 2rem; } .brand > span:last-child, .nav-label, .side-nav a { font-size: 0; } .side-nav { width: 100%; } .side-nav a, .logout-button { justify-content: center; width: 100%; padding: 0; font-size: 0; } .side-nav svg, .logout-button svg { width: 1.2rem; height: 1.2rem; } .workspace { width: calc(100% - 68px); margin-left: 68px; } .topbar { height: 62px; padding: 0 1rem; } .page-content { padding: 1.5rem 1rem; } }
 </style>

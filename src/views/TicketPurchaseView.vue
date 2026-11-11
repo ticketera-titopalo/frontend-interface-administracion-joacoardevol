@@ -58,8 +58,8 @@ async function confirmPurchase() {
     })
     await router.replace({
       name: 'purchase-success',
-      params: { purchaseId: purchase.id ?? purchase._id ?? 'confirmada' },
-      query: { concertId: route.params.concertId, quantity: String(quantity.value) },
+      params: { purchaseId: purchase.id ?? purchase._id ?? purchase.purchase_id ?? purchase.purchaseId ?? 'confirmada' },
+      query: { concertId: route.params.concertId, quantity: String(quantity.value), emit: '1' },
     })
   } catch (purchaseFailure) {
     if (purchaseFailure instanceof PurchaseError && purchaseFailure.type === 'stock') {
