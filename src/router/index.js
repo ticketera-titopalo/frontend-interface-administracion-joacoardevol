@@ -26,6 +26,24 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/concerts',
+      name: 'concerts',
+      component: () => import('../views/SectionView.vue'),
+      meta: { requiresAuth: true, title: 'Conciertos', description: 'Administra los eventos de Ticketera.', subject: 'los conciertos' },
+    },
+    {
+      path: '/users',
+      name: 'users',
+      component: () => import('../views/SectionView.vue'),
+      meta: { requiresAuth: true, title: 'Usuarios', description: 'Consulta las cuentas registradas.', subject: 'los usuarios' },
+    },
+    {
+      path: '/tickets',
+      name: 'tickets',
+      component: () => import('../views/SectionView.vue'),
+      meta: { requiresAuth: true, title: 'Tickets', description: 'Revisa las ventas de tickets.', subject: 'los tickets' },
+    },
   ],
 })
 
