@@ -1,6 +1,8 @@
 <script setup>
+import { onMounted, onUnmounted } from 'vue'
 import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { useAuthStore } from './store/auth'
+import ToastContainer from './components/ToastContainer.vue'
 
 const auth = useAuthStore()
 const router = useRouter()
@@ -9,9 +11,19 @@ function logout() {
   auth.logout()
   router.replace('/login')
 }
+
+function handleSessionExpired() {
+  if (!auth.isAuthenticated) return
+  auth.logout()
+  router.replace({ name: 'login', query: { expired: '1' } })
+}
+
+onMounted(() => window.addEventListener('ticketera:session-expired', handleSessionExpired))
+onUnmounted(() => window.removeEventListener('ticketera:session-expired', handleSessionExpired))
 </script>
 
 <template>
+  <div class="app-root">
   <div v-if="auth.isAuthenticated" class="admin-layout">
     <aside class="sidebar">
       <RouterLink class="brand" to="/">
@@ -50,12 +62,15 @@ function logout() {
     </div>
   </div>
   <RouterView v-else />
+  <ToastContainer />
+  </div>
 </template>
 
 <style>
 :root { font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #172033; background: #f6f8fb; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; }
+.app-root { min-height: 100vh; }
 button, a { font: inherit; }
 .admin-layout { min-height: 100vh; display: flex; background: #f6f8fb; }
 .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 2; display: flex; flex-direction: column; width: 252px; padding: 1.65rem 1rem 1rem; color: #cad3e2; background: #17243b; }

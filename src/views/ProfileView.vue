@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { getMyProfile, updateMyProfile } from '../api/users'
 import { useAuthStore } from '../store/auth'
 
@@ -9,6 +9,12 @@ const loading = ref(true)
 const saving = ref(false)
 const error = ref('')
 const success = ref('')
+const touched = reactive({ name: false, email: false, photo: false })
+const fieldErrors = computed(() => ({
+  name: !profile.name.trim() ? 'El nombre es obligatorio.' : profile.name.trim().length < 2 ? 'Ingresa al menos 2 caracteres.' : '',
+  email: !profile.email.trim() ? 'El correo es obligatorio.' : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email) ? '' : 'Ingresa un correo válido.',
+  photo: profile.photo && !/^https?:\/\//i.test(profile.photo) ? 'Ingresa una URL que comience con http:// o https://.' : '',
+}))
 
 async function loadProfile() {
   loading.value = true
@@ -30,6 +36,8 @@ async function loadProfile() {
 }
 
 async function saveProfile() {
+  Object.keys(touched).forEach((key) => { touched[key] = true })
+  if (Object.values(fieldErrors.value).some(Boolean)) return
   saving.value = true
   error.value = ''
   success.value = ''
@@ -57,10 +65,10 @@ onMounted(loadProfile)
         <span v-else>{{ (profile.name || profile.email || 'U').charAt(0).toUpperCase() }}</span>
         <div><strong>{{ profile.name || 'Usuario' }}</strong><small>{{ profile.email }}</small></div>
       </div>
-      <label for="name">Nombre</label><input id="name" v-model.trim="profile.name" autocomplete="name" required />
-      <label for="email">Correo electrónico</label><input id="email" v-model.trim="profile.email" type="email" autocomplete="email" required />
+      <label for="name">Nombre</label><input id="name" v-model.trim="profile.name" autocomplete="name" required :aria-invalid="touched.name && Boolean(fieldErrors.name)" @input="touched.name = true" /><span v-if="touched.name && fieldErrors.name" class="field-error">{{ fieldErrors.name }}</span>
+      <label for="email">Correo electrónico</label><input id="email" v-model.trim="profile.email" type="email" autocomplete="email" required :aria-invalid="touched.email && Boolean(fieldErrors.email)" @input="touched.email = true" /><span v-if="touched.email && fieldErrors.email" class="field-error">{{ fieldErrors.email }}</span>
       <label for="phone">Teléfono</label><input id="phone" v-model.trim="profile.phone" type="tel" autocomplete="tel" />
-      <label for="photo">URL de foto de perfil</label><input id="photo" v-model.trim="profile.photo" type="url" placeholder="https://…" />
+      <label for="photo">URL de foto de perfil</label><input id="photo" v-model.trim="profile.photo" type="url" placeholder="https://…" :aria-invalid="touched.photo && Boolean(fieldErrors.photo)" @input="touched.photo = true" /><span v-if="touched.photo && fieldErrors.photo" class="field-error">{{ fieldErrors.photo }}</span>
       <p v-if="error" class="feedback error" role="alert">{{ error }}</p>
       <p v-if="success" class="feedback success" role="status">{{ success }}</p>
       <button class="primary-button" type="submit" :disabled="saving">{{ saving ? 'Guardando…' : 'Guardar cambios' }}</button>
@@ -82,6 +90,8 @@ onMounted(loadProfile)
 label { margin-top: 0.25rem; color: #39465b; font-size: 0.74rem; font-weight: 600; }
 input { min-height: 2.65rem; padding: 0.6rem 0.75rem; border: 1px solid #d8dee8; border-radius: 5px; outline: none; color: #344158; background: white; font: inherit; font-size: 0.8rem; }
 input:focus { border-color: #6d82dc; box-shadow: 0 0 0 3px #526bd01a; }
+input[aria-invalid="true"] { border-color: #c86c6c; }
+.field-error { margin-top: -0.45rem; color: #b42318; font-size: 0.68rem; }
 .primary-button { justify-self: start; min-height: 2.65rem; margin-top: 0.5rem; padding: 0 1rem; border: 0; border-radius: 5px; color: white; background: #425fca; font: inherit; font-size: 0.78rem; font-weight: 600; cursor: pointer; }.primary-button:disabled { opacity: 0.65; cursor: wait; }
 .feedback { margin: 0; font-size: 0.75rem; }.error { color: #a64b4b; }.success { color: #218268; }.loading { min-height: 180px; place-items: center; color: #78859a; }
 </style>
