@@ -1,10 +1,13 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import { useAuthStore } from './store/auth'
+
+const auth = useAuthStore()
 </script>
 
 <template>
-  <header>
+  <header v-if="auth.isAuthenticated">
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
@@ -13,6 +16,7 @@ import HelloWorld from './components/HelloWorld.vue'
       <nav>
         <RouterLink to="/">Inicio</RouterLink>
         <RouterLink to="/about">Acerca de</RouterLink>
+        <button type="button" @click="auth.logout(); $router.replace('/login')">Cerrar sesión</button>
       </nav>
     </div>
   </header>
@@ -54,6 +58,16 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
+}
+
+nav button {
+  margin-left: 1rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text);
+  background: transparent;
+  cursor: pointer;
 }
 
 @media (min-width: 1024px) {
