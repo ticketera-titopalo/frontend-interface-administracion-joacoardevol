@@ -5,7 +5,7 @@ export async function loginWithCredentials(credentials) {
     const name = credentials.email.split('@')[0].replace(/[._-]/g, ' ')
     return {
       token: 'ticketera-demo-token',
-      user: { name: name || 'Administrador', email: credentials.email },
+      user: { id: 'demo-user-1', name: name || 'Administrador', email: credentials.email },
     }
   }
 
