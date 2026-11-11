@@ -29,8 +29,14 @@ const router = createRouter({
     {
       path: '/concerts',
       name: 'concerts',
-      component: () => import('../views/SectionView.vue'),
-      meta: { requiresAuth: true, title: 'Conciertos', description: 'Administra los eventos de Ticketera.', subject: 'los conciertos' },
+      component: () => import('../views/ConcertsView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/concerts/:id',
+      name: 'concert-detail',
+      component: () => import('../views/ConcertDetailView.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/users',
