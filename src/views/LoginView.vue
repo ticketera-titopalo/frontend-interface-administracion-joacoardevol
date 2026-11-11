@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../store/auth'
 
@@ -11,9 +11,21 @@ const password = ref('')
 const error = ref('')
 const submitting = ref(false)
 const demoMode = import.meta.env.VITE_DEMO_MODE === 'true'
+const emailTouched = ref(false)
+const passwordTouched = ref(false)
+const emailError = computed(() => {
+  if (!emailTouched.value) return ''
+  if (!email.value) return 'Ingresa tu correo electrónico.'
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value) ? '' : 'Ingresa un correo electrónico válido.'
+})
+const passwordError = computed(() => passwordTouched.value && !password.value ? 'Ingresa tu contraseña.' : '')
+const canSubmit = computed(() => Boolean(email.value && password.value && !emailError.value))
 
 async function submitLogin() {
   error.value = ''
+  emailTouched.value = true
+  passwordTouched.value = true
+  if (!canSubmit.value) return
   submitting.value = true
   try {
     await auth.login({ email: email.value, password: password.value })
@@ -34,13 +46,16 @@ async function submitLogin() {
       <p class="login-caption">PLATAFORMA DE GESTIÓN</p>
       <h1>Te damos la bienvenida</h1>
       <p class="login-intro">Inicia sesión para continuar al panel de administración.</p>
+      <p v-if="route.query.expired" class="session-notice" role="status">Tu sesión expiró. Ingresa nuevamente para continuar.</p>
       <p v-if="demoMode" class="demo-notice">Modo demo: puedes usar cualquier correo y contraseña.</p>
       <label for="email">Correo electrónico</label>
-      <input id="email" v-model.trim="email" type="email" autocomplete="username" required />
+      <input id="email" v-model.trim="email" type="email" autocomplete="username" required :aria-invalid="Boolean(emailError)" @input="emailTouched = true" @blur="emailTouched = true" />
+      <span v-if="emailError" class="field-error">{{ emailError }}</span>
       <label for="password">Contraseña</label>
-      <input id="password" v-model="password" type="password" autocomplete="current-password" required />
+      <input id="password" v-model="password" type="password" autocomplete="current-password" required :aria-invalid="Boolean(passwordError)" @input="passwordTouched = true" @blur="passwordTouched = true" />
+      <span v-if="passwordError" class="field-error">{{ passwordError }}</span>
       <p v-if="error" class="error-message" role="alert">{{ error }}</p>
-      <button type="submit" :disabled="submitting">{{ submitting ? 'Ingresando…' : 'Ingresar' }}</button>
+      <button type="submit" :disabled="submitting || !canSubmit">{{ submitting ? 'Ingresando…' : 'Ingresar' }}</button>
     </form>
   </main>
 </template>
@@ -62,6 +77,8 @@ button { margin-top: 0.55rem; border: 0; border-radius: 5px; color: #fff; backgr
 button:hover:not(:disabled) { background: #344fae; }
 button:disabled { opacity: 0.65; cursor: wait; }
 .error-message { color: #b42318; font-size: 0.8rem; }
+.field-error { margin-top: -0.55rem; color: #b42318; font-size: 0.68rem; }
+.session-notice { padding: 0.6rem 0.7rem; border: 1px solid #f1e4c8; border-radius: 5px; color: #745c2c; background: #fffbf2; font-size: 0.74rem; }
 .demo-notice { padding: 0.6rem 0.7rem; border: 1px solid #f1e4c8; border-radius: 5px; color: #745c2c; background: #fffbf2; font-size: 0.74rem; }
 @media (max-width: 480px) { .login-page { padding: 1rem; } .login-card { padding: 1.6rem; } }
 </style>
