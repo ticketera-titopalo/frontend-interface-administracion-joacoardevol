@@ -11,15 +11,18 @@ const success = ref('')
 const newPasswordError = computed(() => newPassword.value.length > 0 && newPassword.value.length < 8 ? 'Usa al menos 8 caracteres.' : '')
 const confirmPasswordError = computed(() => confirmPassword.value && confirmPassword.value !== newPassword.value ? 'Las contraseñas no coinciden.' : '')
 
+function passwordChangeError() {
+  if (newPasswordError.value) return newPasswordError.value
+  if (confirmPasswordError.value) return confirmPasswordError.value
+  return confirmPassword.value ? '' : 'Confirma la nueva contraseña.'
+}
+
 async function submitPasswordChange() {
   error.value = ''
   success.value = ''
-  if (newPasswordError.value) {
-    error.value = newPasswordError.value
-    return
-  }
-  if (confirmPasswordError.value || !confirmPassword.value) {
-    error.value = confirmPasswordError.value || 'Confirma la nueva contraseña.'
+  const validationError = passwordChangeError()
+  if (validationError) {
+    error.value = validationError
     return
   }
 

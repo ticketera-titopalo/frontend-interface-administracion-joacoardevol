@@ -10,11 +10,15 @@ const error = ref('')
 const isDemo = import.meta.env.VITE_DEMO_MODE === 'true'
 const issuedCount = computed(() => tickets.value.length)
 
+function currentUserId() {
+  return auth.user?.id ?? auth.user?._id ?? (isDemo ? 'demo-user-1' : null)
+}
+
 async function loadTickets() {
   loading.value = true
   error.value = ''
   try {
-    const userId = auth.user?.id ?? auth.user?._id ?? (isDemo ? 'demo-user-1' : null)
+    const userId = currentUserId()
     if (!userId) throw new Error('No se encontró el identificador de usuario de la sesión.')
     tickets.value = await getUserTickets(userId)
   } catch (loadError) {

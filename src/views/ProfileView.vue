@@ -10,10 +10,28 @@ const saving = ref(false)
 const error = ref('')
 const success = ref('')
 const touched = reactive({ name: false, email: false, photo: false })
+
+function validateName(name) {
+  const value = name.trim()
+  if (!value) return 'El nombre es obligatorio.'
+  return value.length < 2 ? 'Ingresa al menos 2 caracteres.' : ''
+}
+
+function validateEmail(email) {
+  const value = email.trim()
+  if (!value) return 'El correo es obligatorio.'
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Ingresa un correo válido.'
+}
+
+function validatePhoto(photo) {
+  if (!photo || /^https?:\/\//i.test(photo)) return ''
+  return 'Ingresa una URL que comience con http:// o https://.'
+}
+
 const fieldErrors = computed(() => ({
-  name: !profile.name.trim() ? 'El nombre es obligatorio.' : profile.name.trim().length < 2 ? 'Ingresa al menos 2 caracteres.' : '',
-  email: !profile.email.trim() ? 'El correo es obligatorio.' : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email) ? '' : 'Ingresa un correo válido.',
-  photo: profile.photo && !/^https?:\/\//i.test(profile.photo) ? 'Ingresa una URL que comience con http:// o https://.' : '',
+  name: validateName(profile.name),
+  email: validateEmail(profile.email),
+  photo: validatePhoto(profile.photo),
 }))
 
 async function loadProfile() {

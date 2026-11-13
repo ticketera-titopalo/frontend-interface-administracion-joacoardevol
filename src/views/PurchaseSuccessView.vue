@@ -22,6 +22,38 @@ function formatPrice(value) {
 
 const cacheKey = `ticketera_purchase_tickets_${route.params.purchaseId}`
 
+function currentUserId() {
+  return auth.user?.id ?? auth.user?._id ?? (isDemo ? 'demo-user-1' : null)
+}
+
+function readCachedTickets() {
+  try {
+    return JSON.parse(localStorage.getItem(cacheKey) ?? 'null')
+  } catch {
+    return null
+  }
+}
+
+function ticketsForPurchase(userTickets, emitted) {
+  const purchaseId = String(route.params.purchaseId)
+  const matching = userTickets.filter((ticket) =>
+    String(getTicketValue(ticket, 'purchase_id', 'purchaseId', 'purchase.id')) === purchaseId,
+  )
+  return matching.length ? matching : emitted?.length ? emitted : userTickets
+}
+
+function shouldEmitTickets(emitted) {
+  return route.query.emit === '1' && emitted === null
+}
+
+function setMissingTicketsMessage() {
+  const noTickets = tickets.value.length === 0
+  const emissionRequested = route.query.emit === '1'
+  if (noTickets && emissionRequested) {
+    ticketError.value = 'La compra fue confirmada, pero todavía no se encontraron tickets emitidos.'
+  }
+}
+
 async function loadPurchaseDetails() {
   if (route.query.concertId) {
     try {
@@ -36,28 +68,18 @@ async function loadTickets() {
   loadingTickets.value = true
   ticketError.value = ''
   try {
-    let emitted = null
-    try {
-      emitted = JSON.parse(localStorage.getItem(cacheKey) ?? 'null')
-    } catch {
-      emitted = null
-    }
+    let emitted = readCachedTickets()
+    const userId = currentUserId()
+    if (!userId) throw new Error('No se encontró el identificador del usuario para consultar sus tickets.')
 
-    if (route.query.emit === '1' && emitted === null) {
-      const userId = auth.user?.id ?? auth.user?._id ?? (isDemo ? 'demo-user-1' : null)
+    if (shouldEmitTickets(emitted)) {
       emitted = await emitPurchaseTickets(route.params.purchaseId, quantity.value, userId)
       localStorage.setItem(cacheKey, JSON.stringify(emitted))
     }
 
-    const userId = auth.user?.id ?? auth.user?._id ?? (isDemo ? 'demo-user-1' : null)
-    if (!userId) throw new Error('No se encontró el identificador del usuario para consultar sus tickets.')
     const userTickets = await getUserTickets(userId)
-    const purchaseTickets = userTickets.filter((ticket) => String(getTicketValue(ticket, 'purchase_id', 'purchaseId', 'purchase.id')) === String(route.params.purchaseId))
-    tickets.value = purchaseTickets.length ? purchaseTickets : (emitted?.length ? emitted : userTickets)
-
-    if (!tickets.value.length && route.query.emit === '1') {
-      ticketError.value = 'La compra fue confirmada, pero todavía no se encontraron tickets emitidos.'
-    }
+    tickets.value = ticketsForPurchase(userTickets, emitted)
+    setMissingTicketsMessage()
   } catch (loadError) {
     ticketError.value = loadError.response?.data?.message ?? loadError.message ?? 'No se pudieron emitir o cargar los tickets.'
   } finally {
