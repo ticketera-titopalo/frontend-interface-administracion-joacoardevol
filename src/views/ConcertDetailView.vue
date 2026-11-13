@@ -9,12 +9,23 @@ const loading = ref(true)
 const error = ref('')
 const soldTickets = computed(() => Number(getConcertValue(concert.value, 'ticketsSold', 'tickets_sold', 'soldTickets', 'sold_tickets', 'sold') ?? 0))
 const availableStock = computed(() => Number(getConcertValue(concert.value, 'availableStock', 'available_stock', 'stockAvailable', 'stock_available', 'stock') ?? 0))
-const occupancy = computed(() => {
-  const supplied = getConcertValue(concert.value, 'occupancyPercentage', 'occupancy_percentage', 'occupancy')
-  if (supplied !== null) return Math.max(0, Math.min(100, Number(supplied)))
-  const capacity = Number(getConcertValue(concert.value, 'capacity', 'totalStock', 'total_stock') ?? soldTickets.value + availableStock.value)
-  return capacity > 0 ? Math.max(0, Math.min(100, Math.round((soldTickets.value / capacity) * 100))) : 0
-})
+
+function clampPercentage(value) {
+  return Math.max(0, Math.min(100, value))
+}
+
+function calculateOccupancy(event) {
+  const supplied = getConcertValue(event, 'occupancyPercentage', 'occupancy_percentage', 'occupancy')
+  if (supplied !== null) return clampPercentage(Number(supplied))
+
+  const sold = Number(getConcertValue(event, 'ticketsSold', 'tickets_sold', 'soldTickets', 'sold_tickets', 'sold') ?? 0)
+  const stock = Number(getConcertValue(event, 'availableStock', 'available_stock', 'stockAvailable', 'stock_available', 'stock') ?? 0)
+  const capacity = Number(getConcertValue(event, 'capacity', 'totalStock', 'total_stock') ?? sold + stock)
+  if (capacity <= 0) return 0
+  return clampPercentage(Math.round((sold / capacity) * 100))
+}
+
+const occupancy = computed(() => calculateOccupancy(concert.value))
 
 function formatPrice(value) {
   if (value === null || value === undefined) return '—'

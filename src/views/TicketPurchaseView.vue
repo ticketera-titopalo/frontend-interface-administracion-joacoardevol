@@ -35,19 +35,33 @@ async function loadConcert() {
   }
 }
 
+function validatePurchase() {
+  if (quantity.value < 1 || quantity.value > stock.value) {
+    return `Stock insuficiente. Quedan ${stock.value} entradas disponibles.`
+  }
+  const hasUserId = auth.user?.id !== undefined && auth.user?.id !== null
+  const hasLegacyUserId = auth.user?._id !== undefined && auth.user?._id !== null
+  if (!hasUserId && !hasLegacyUserId) {
+    return 'No se encontró el usuario de la sesión. Vuelve a iniciar sesión.'
+  }
+  return ''
+}
+
+function purchaseFailureMessage(failure) {
+  if (failure instanceof PurchaseError && failure.type === 'stock') {
+    return 'Stock insuficiente. Actualiza la página para consultar la disponibilidad actual.'
+  }
+  return failure.message ?? 'No se pudo completar la compra.'
+}
+
 async function confirmPurchase() {
   purchaseError.value = ''
-
-  if (quantity.value < 1 || quantity.value > stock.value) {
-    purchaseError.value = `Stock insuficiente. Quedan ${stock.value} entradas disponibles.`
+  const validationError = validatePurchase()
+  if (validationError) {
+    purchaseError.value = validationError
     return
   }
-
   const userId = auth.user?.id ?? auth.user?._id
-  if (userId === undefined || userId === null) {
-    purchaseError.value = 'No se encontró el usuario de la sesión. Vuelve a iniciar sesión.'
-    return
-  }
 
   submitting.value = true
   try {
@@ -62,11 +76,7 @@ async function confirmPurchase() {
       query: { concertId: route.params.concertId, quantity: String(quantity.value), emit: '1' },
     })
   } catch (purchaseFailure) {
-    if (purchaseFailure instanceof PurchaseError && purchaseFailure.type === 'stock') {
-      purchaseError.value = 'Stock insuficiente. Actualiza la página para consultar la disponibilidad actual.'
-    } else {
-      purchaseError.value = purchaseFailure.message ?? 'No se pudo completar la compra.'
-    }
+    purchaseError.value = purchaseFailureMessage(purchaseFailure)
   } finally {
     submitting.value = false
   }

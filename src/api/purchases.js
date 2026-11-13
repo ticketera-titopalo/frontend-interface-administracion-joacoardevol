@@ -9,6 +9,29 @@ export class PurchaseError extends Error {
   }
 }
 
+function isInsufficientStock(data = {}, message = '') {
+  const stockMessage = /insufficient stock|stock insuficiente|not enough stock/i.test(message)
+  return Boolean(data.stock_insufficient) || data.code === 'INSUFFICIENT_STOCK' || stockMessage
+}
+
+function purchaseFromResponse(data) {
+  if (data?.success === false) {
+    throw new PurchaseError(data.message ?? 'No se pudo completar la compra.')
+  }
+  return data?.purchase ?? data?.data ?? data
+}
+
+function normalizePurchaseError(error) {
+  if (error instanceof PurchaseError) return error
+
+  const data = error.response?.data ?? {}
+  const message = String(data.message ?? data.error ?? '')
+  if (error.response?.status === 409 || isInsufficientStock(data, message)) {
+    return new PurchaseError(data.message ?? 'No hay suficientes entradas disponibles.', 'stock')
+  }
+  return new PurchaseError(data.message ?? 'No se pudo completar la compra.')
+}
+
 export async function createPurchase({ concert_id, quantity, user_id }) {
   if (import.meta.env.VITE_DEMO_MODE === 'true') {
     const concert = await getConcertById(concert_id)
@@ -25,18 +48,11 @@ export async function createPurchase({ concert_id, quantity, user_id }) {
 
   try {
     const { data } = await api.post('/api/purchases', { concert_id, quantity, user_id })
-    const responseMessage = String(data?.message ?? data?.error ?? '')
-    if (data?.stock_insufficient || data?.code === 'INSUFFICIENT_STOCK' || /insufficient stock|stock insuficiente|not enough stock/i.test(responseMessage)) {
+    if (isInsufficientStock(data, String(data?.message ?? data?.error ?? ''))) {
       throw new PurchaseError(data.message ?? 'No hay suficientes entradas disponibles.', 'stock')
     }
-    if (data?.success === false) throw new PurchaseError(data.message ?? 'No se pudo completar la compra.')
-    return data?.purchase ?? data?.data ?? data
+    return purchaseFromResponse(data)
   } catch (error) {
-    if (error instanceof PurchaseError) throw error
-    const responseMessage = String(error.response?.data?.message ?? error.response?.data?.error ?? '')
-    if (error.response?.status === 409 || error.response?.data?.code === 'INSUFFICIENT_STOCK' || /insufficient stock|stock insuficiente|not enough stock/i.test(responseMessage)) {
-      throw new PurchaseError(error.response?.data?.message ?? 'No hay suficientes entradas disponibles.', 'stock')
-    }
-    throw new PurchaseError(error.response?.data?.message ?? 'No se pudo completar la compra.')
+    throw normalizePurchaseError(error)
   }
 }

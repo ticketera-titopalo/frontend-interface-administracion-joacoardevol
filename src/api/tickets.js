@@ -1,6 +1,7 @@
 import api from './index'
 
 const DEMO_TICKETS_KEY = 'ticketera_demo_tickets'
+const USED_STATUSES = new Set(['used', 'usado', 'utilizado'])
 
 function readDemoTickets() {
   try {
@@ -11,14 +12,12 @@ function readDemoTickets() {
 }
 
 function unwrapTickets(payload) {
-  if (Array.isArray(payload)) return payload
-  if (Array.isArray(payload?.tickets)) return payload.tickets
-  if (Array.isArray(payload?.items)) return payload.items
-  if (Array.isArray(payload?.data)) return payload.data
-  if (Array.isArray(payload?.data?.tickets)) return payload.data.tickets
+  const collections = [payload, payload?.tickets, payload?.items, payload?.data, payload?.data?.tickets]
+  const collection = collections.find(Array.isArray)
+  if (collection) return collection
+
   if (payload?.ticket && typeof payload.ticket === 'object') return [payload.ticket]
-  if (payload?.code || payload?.ticket_code || payload?.codigo) return [payload]
-  return []
+  return payload?.code || payload?.ticket_code || payload?.codigo ? [payload] : []
 }
 
 export async function emitPurchaseTickets(purchaseId, quantity = 1, userId = 'demo-user-1') {
@@ -58,8 +57,8 @@ export function getTicketValue(ticket, ...keys) {
 
 export function isTicketUsed(ticket) {
   const used = getTicketValue(ticket, 'used', 'is_used', 'isUsed')
-  if (used === true || used === 1 || used === '1' || used === 'true') return true
-  if (used === false || used === 0 || used === '0' || used === 'false') return false
+  if ([true, 1, '1', 'true'].includes(used)) return true
+  if ([false, 0, '0', 'false'].includes(used)) return false
   const status = String(getTicketValue(ticket, 'status', 'estado') ?? '').toLocaleLowerCase()
-  return ['used', 'usado', 'utilizado'].includes(status)
+  return USED_STATUSES.has(status)
 }

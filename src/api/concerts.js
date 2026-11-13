@@ -11,13 +11,15 @@ const demoConcerts = [
 ]
 
 function unwrapConcerts(payload) {
-  if (Array.isArray(payload)) return payload
-  if (Array.isArray(payload?.concerts)) return payload.concerts
-  if (Array.isArray(payload?.items)) return payload.items
-  if (Array.isArray(payload?.data)) return payload.data
-  if (Array.isArray(payload?.data?.concerts)) return payload.data.concerts
-  if (Array.isArray(payload?.data?.items)) return payload.data.items
-  return []
+  const collections = [
+    payload,
+    payload?.concerts,
+    payload?.items,
+    payload?.data,
+    payload?.data?.concerts,
+    payload?.data?.items,
+  ]
+  return collections.find(Array.isArray) ?? []
 }
 
 export async function getConcerts() {

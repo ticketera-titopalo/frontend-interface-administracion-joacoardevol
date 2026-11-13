@@ -13,10 +13,15 @@ const submitting = ref(false)
 const demoMode = import.meta.env.VITE_DEMO_MODE === 'true'
 const emailTouched = ref(false)
 const passwordTouched = ref(false)
-const emailError = computed(() => {
+
+function validateEmail(value) {
   if (!emailTouched.value) return ''
-  if (!email.value) return 'Ingresa tu correo electrónico.'
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value) ? '' : 'Ingresa un correo electrónico válido.'
+  if (!value) return 'Ingresa tu correo electrónico.'
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Ingresa un correo electrónico válido.'
+}
+
+const emailError = computed(() => {
+  return validateEmail(email.value)
 })
 const passwordError = computed(() => passwordTouched.value && !password.value ? 'Ingresa tu contraseña.' : '')
 const canSubmit = computed(() => Boolean(email.value && password.value && !emailError.value))
