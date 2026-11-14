@@ -3,17 +3,17 @@
 
 > Documento **generado automáticamente** por la cátedra de Programación III (RepoSense + análisis de calidad + constancia). **No editar a mano**: se regenera en cada evaluación.
 > Rama evaluada: `main`. Análisis **heurístico** (regex + métricas): es una criba para orientar la revisión, **no una nota**.
-> Generado: 2026-11-13.
+> Generado: 2026-11-14.
 
 ## 1. Veredicto
 
 | Aspecto | Resultado |
 |---|---|
 | Tipo de proyecto | frontend |
-| Índice de calidad de servicios | **57/100** (mínimo 50) |
+| Índice de calidad de servicios | **42/100** (mínimo 50) |
 | Criterios cumplidos | **12/14** |
-| Aprobado (semáforo) | **SI** |
-| Código (LOC) | 1,705 |
+| Aprobado (semáforo) | **NO** |
+| Código (LOC) | 1,772 |
 | Archivos de código | 33 |
 | Tests (archivos) | 0 |
 | Cobertura de líneas | no aplica (frontend sin herramienta de cobertura E2E) |
@@ -26,8 +26,8 @@
 
 | Autor | Commits | Código (LOC) | Tests (LOC) | Docs (LOC) | Días activos | % del código |
 |---|---:|---:|---:|---:|---:|---:|
-| joacoardevol | 9 | 1,999 | 0 | 38 | 1 | 100% |
-| joaquin ardevol | 0 | 0 | 0 | 0 | 1 | 0% |
+| joacoardevol | 10 | 2,087 | 0 | 38 | 2 | 100% |
+| joaquin ardevol | 0 | 0 | 0 | 0 | 2 | 0% |
 
 > _El LOC de autoría lo calcula RepoSense sobre el historial y puede diferir del LOC de código del análisis de calidad (que mira solo el estado de `main`)._
 
@@ -39,7 +39,7 @@
 
 | Alumno | Sesiones | Cumplimiento | Pausa | Recencia | IC | Nivel | Para subir de nivel |
 |---|--:|--:|--:|--:|--:|--|--|
-| joaquin ardevol | 8 | 30% | 42 d | 86% | **32** | No aprueba | Cumplimiento 30% (mín. 50%) |
+| joaquin ardevol | 9 | 34% | 42 d | 100% | **36** | No aprueba | Cumplimiento 34% (mín. 50%) |
 | joaquin ardevol | — | — | — | — | — | — | sin datos de IC |
 
 > Para aprobar el IC: **2 sesiones por semana** sostenidas, sin pausas mayores a **10 días** y con actividad en las **últimas 2 semanas**. Se excluyen merges, bots y al docente. Zona horaria UTC-3.
@@ -48,17 +48,21 @@
 
 Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuando el resultado está en rojo, se agregan preguntas para **investigar la causa** (no hay recetas: entender el porqué es parte de la evaluación).
 
-### 1. Índice de calidad de servicios (indice) — OK
+### 1. Índice de calidad de servicios (indice) — A REVISAR
 
 - **Qué mide:** Un resumen numérico (0-100) que combina todas las señales y métricas del análisis, con topes duros por duplicación.
 - **Por qué importa:** Ordena y prioriza la revisión: un índice bajo indica varias señales que conviene mirar juntas.
-- **Tu resultado:** índice **57/100** _(mínimo 50)_
+- **Tu resultado:** índice **42/100** _(mínimo 50)_
+- **Para investigar la causa:**
+    - ¿En qué momento del proyecto se concentraron los problemas (arranque, integración de partes, cierre)?
+    - ¿El índice bajó por muchas señales chicas o por una o dos graves?
+    - ¿Se revisó el código integrado después de unir el trabajo de cada integrante?
 
 ### 2. Duplicación (DRY) (duplicacion) — OK
 
 - **Qué mide:** Porcentaje de bloques de código repetidos (similitud) en el repositorio.
 - **Por qué importa:** Cada copia se mantiene por separado: un arreglo hay que repetirlo y los defectos se multiplican.
-- **Tu resultado:** **2.2%** de duplicación _(máximo 15%)_
+- **Tu resultado:** **2.0%** de duplicación _(máximo 15%)_
 
 ### 3. Secretos hardcodeados (SEC) — OK
 
@@ -78,15 +82,11 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 - **Por qué importa:** Sin separación, cada archivo hace de todo y cualquier cambio toca varios lugares a la vez.
 - **Tu resultado:** **3** capa(s) detectada(s): vistas, servicios, estado _(mínimo 2 capas (a partir de 150 LOC))_
 
-### 6. Acceso a datos dentro del componente (HTTP) — A REVISAR
+### 6. Acceso a datos dentro del componente (HTTP) — OK
 
 - **Qué mide:** Llamadas `fetch`/`axios` dentro de componentes de UI en vez de una capa de servicios/API.
 - **Por qué importa:** Duplica la lógica de acceso a datos y acopla la vista al backend: un cambio de API toca muchos componentes.
-- **Tu resultado:** **1** llamada(s) a la API dentro de componente(s) _(máximo 0)_
-- **Para investigar la causa:**
-    - ¿Por qué se llamó directo desde el componente: urgencia, desconocimiento de una capa de servicios, o prueba rápida?
-    - ¿La misma llamada aparece en más de un componente?
-    - ¿Se acordó dónde debía vivir el acceso a la API?
+- **Tu resultado:** **0** llamada(s) a la API dentro de componente(s) _(máximo 0)_
 
 ### 7. Depuración olvidada (DBG) — OK
 
@@ -116,7 +116,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Complejidad ciclomática: cantidad de caminos posibles dentro de una función (condicionales, bucles, casos).
 - **Por qué importa:** Muchos caminos = difícil de seguir y de probar; suelen esconderse casos sin cubrir.
-- **Tu resultado:** **14** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 1705 LOC))_
+- **Tu resultado:** **20** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 1772 LOC))_
 - **Para investigar la causa:**
     - ¿Se agregaron condiciones a medida que aparecían casos nuevos?
     - ¿Se probaron todos los caminos o solo el caso principal?
@@ -126,7 +126,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Tamaño de las funciones/métodos y cantidad de parámetros.
 - **Por qué importa:** Una función que hace varias cosas cuesta leerla, nombrarla y reutilizarla.
-- **Tu resultado:** **1** función/método(s) largos o con muchos parámetros _(máximo 10 por 1000 LOC)_
+- **Tu resultado:** **0** función/método(s) largos o con muchos parámetros _(máximo 10 por 1000 LOC)_
 
 ### 13. Acoplamiento alto (Acop) — OK
 
@@ -142,12 +142,14 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 ## 5. Observaciones y qué falta
 
-**Aprobado con observaciones.** Estos criterios quedan en rojo (se permiten hasta **3** sin que sean compuertas críticas), así que no bloquean la aprobación pero conviene corregirlos:
+Criterios que hoy están en rojo y, para cada uno, una explicación breve de **cómo corregirlo** hasta alcanzar el nivel de aprobación (perfil `exigente`):
 
 | Criterio | Resultado actual | Meta | Brecha | Cómo alcanzarlo |
 |---|---|---|---|---|
-| Acceso a datos dentro del componente (HTTP) | **1** llamada(s) a la API dentro de componente(s) | máximo 0 | 1 caso(s) a eliminar | Creá una capa de servicios/API (un módulo por recurso) que centralice `fetch`/`axios` y consumila desde los componentes; así el acceso a datos deja de estar duplicado en las vistas. Meta: 0 casos. |
-| Complejidad alta (Compl) | **14** bloque(s) de complejidad alta | máximo 5 por 1000 LOC (tenés 1705 LOC) | 14 hallazgo(s); el máximo para 1,705 LOC es 8.5 | Extraé condiciones y ramas a funciones con nombre propio, usá retornos tempranos y evitá anidar `if`/`switch`. Meta: ≤5 bloques por 1000 LOC. |
+| Índice de calidad de servicios (indice) | índice **42/100** | mínimo 50 | faltan 8 pts | El índice sólo penaliza lo que **excede** los umbrales de cada criterio: si tenés todo en verde, el índice es 100. Si está en rojo, mirá la columna **Brecha** y los criterios en rojo; corregí primero duplicación, SEC, SQL y capas. Meta del perfil exigente: ≥50. |
+| Complejidad alta (Compl) | **20** bloque(s) de complejidad alta | máximo 5 por 1000 LOC (tenés 1772 LOC) | 20 hallazgo(s); el máximo para 1,772 LOC es 8.9 | Extraé condiciones y ramas a funciones con nombre propio, usá retornos tempranos y evitá anidar `if`/`switch`. Meta: ≤5 bloques por 1000 LOC. |
+
+> Empezá por las señales de seguridad (**SEC**, **SQL**) y por la **duplicación**: son las que más pesan en el índice y las más rápidas de verificar a ojo. Después de corregir, volvé a correr la medición: el semáforo se recalcula sobre `main`.
 
 > **Tests (informativo):** hoy tenés **0** archivo(s) de test; la meta es **5**, pero **no** es una compuerta del semáforo. Para acercarte, agregá tests de los flujos principales (servicios y endpoints) y corré la suite con coverage.
 
@@ -157,7 +159,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 ### joaquin ardevol
 
-**11/27 clases con actividad** · total del período: 29 commits · 28 merges
+**12/27 clases con actividad** · total del período: 30 commits · 29 merges
 
 | Fecha | Actividad | Repositorios | Commits / merges |
 |---|:--:|---|--:|
@@ -187,13 +189,13 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 | 2026-11-04 | No | sin actividad | 0 / 0 |
 | 2026-11-06 | **Sí** | frontend_interface-client-JoacoArdevol | 1 / 3 |
 | 2026-11-11 | **Sí** | frontend-interface-administracion-joacoardevol | 9 / 8 |
-| 2026-11-13 | No | sin actividad | 0 / 0 |
+| 2026-11-13 | **Sí** | frontend-interface-administracion-joacoardevol | 1 / 1 |
 
 **Fuera de clase:** sin actividad registrada.
 
 ### palojunent
 
-**14/27 clases con actividad** · total del período: 40 commits · 31 merges
+**15/27 clases con actividad** · total del período: 43 commits · 34 merges
 
 | Fecha | Actividad | Repositorios | Commits / merges |
 |---|:--:|---|--:|
@@ -223,7 +225,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 | 2026-11-04 | No | sin actividad | 0 / 0 |
 | 2026-11-06 | **Sí** | backend-interfaz-de-administraci-n-palomajunent | 14 / 8 |
 | 2026-11-11 | **Sí** | backend-interfaz-de-administraci-n-palomajunent | 4 / 4 |
-| 2026-11-13 | No | sin actividad | 0 / 0 |
+| 2026-11-13 | **Sí** | backend-interfaz-de-administraci-n-palomajunent | 3 / 3 |
 
 **Fuera de clase:** 1 fecha(s) con actividad · 3 commits · 4 merges
 
@@ -235,11 +237,9 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 Archivos donde el análisis encontró cada señal en rojo (sin número de línea, a propósito):
 
-**Acceso a datos dentro del componente (HTTP)** — 1 archivo(s):
-- `src/components/TheWelcome.vue`
-
-**Complejidad alta (Compl)** — 10 archivo(s):
+**Complejidad alta (Compl)** — 11 archivo(s):
 - `src/api/concerts.js`
+- `src/api/purchases.js`
 - `src/api/tickets.js`
 - `src/api/users.js`
 - `src/views/ChangePasswordView.vue`
