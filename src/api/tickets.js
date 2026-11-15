@@ -62,3 +62,12 @@ export function isTicketUsed(ticket) {
   const status = String(getTicketValue(ticket, 'status', 'estado') ?? '').toLocaleLowerCase()
   return USED_STATUSES.has(status)
 }
+
+export function selectPurchaseTickets(userTickets, emittedTickets, purchaseId) {
+  const purchaseTickets = userTickets.filter((ticket) =>
+    String(getTicketValue(ticket, 'purchase_id', 'purchaseId', 'purchase.id')) === String(purchaseId),
+  )
+  if (purchaseTickets.length > 0) return purchaseTickets
+  if (emittedTickets?.length > 0) return emittedTickets
+  return userTickets
+}

@@ -2,30 +2,15 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { getConcertById, getConcertValue } from '../api/concerts'
+import { getAvailableStock, getOccupancy, getSoldTickets } from '../utils/concertMetrics'
 
 const route = useRoute()
 const concert = ref(null)
 const loading = ref(true)
 const error = ref('')
-const soldTickets = computed(() => Number(getConcertValue(concert.value, 'ticketsSold', 'tickets_sold', 'soldTickets', 'sold_tickets', 'sold') ?? 0))
-const availableStock = computed(() => Number(getConcertValue(concert.value, 'availableStock', 'available_stock', 'stockAvailable', 'stock_available', 'stock') ?? 0))
-
-function clampPercentage(value) {
-  return Math.max(0, Math.min(100, value))
-}
-
-function calculateOccupancy(event) {
-  const supplied = getConcertValue(event, 'occupancyPercentage', 'occupancy_percentage', 'occupancy')
-  if (supplied !== null) return clampPercentage(Number(supplied))
-
-  const sold = Number(getConcertValue(event, 'ticketsSold', 'tickets_sold', 'soldTickets', 'sold_tickets', 'sold') ?? 0)
-  const stock = Number(getConcertValue(event, 'availableStock', 'available_stock', 'stockAvailable', 'stock_available', 'stock') ?? 0)
-  const capacity = Number(getConcertValue(event, 'capacity', 'totalStock', 'total_stock') ?? sold + stock)
-  if (capacity <= 0) return 0
-  return clampPercentage(Math.round((sold / capacity) * 100))
-}
-
-const occupancy = computed(() => calculateOccupancy(concert.value))
+const soldTickets = computed(() => getSoldTickets(concert.value))
+const availableStock = computed(() => getAvailableStock(concert.value))
+const occupancy = computed(() => getOccupancy(concert.value))
 
 function formatPrice(value) {
   if (value === null || value === undefined) return '—'
