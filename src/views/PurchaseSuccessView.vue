@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { getConcertById, getConcertValue } from '../api/concerts'
-import { emitPurchaseTickets, getTicketValue, getUserTickets, isTicketUsed } from '../api/tickets'
+import { emitPurchaseTickets, getTicketValue, getUserTickets, isTicketUsed, selectPurchaseTickets } from '../api/tickets'
 import { useAuthStore } from '../store/auth'
 
 const route = useRoute()
@@ -32,14 +32,6 @@ function readCachedTickets() {
   } catch {
     return null
   }
-}
-
-function ticketsForPurchase(userTickets, emitted) {
-  const purchaseId = String(route.params.purchaseId)
-  const matching = userTickets.filter((ticket) =>
-    String(getTicketValue(ticket, 'purchase_id', 'purchaseId', 'purchase.id')) === purchaseId,
-  )
-  return matching.length ? matching : emitted?.length ? emitted : userTickets
 }
 
 function shouldEmitTickets(emitted) {
@@ -78,7 +70,7 @@ async function loadTickets() {
     }
 
     const userTickets = await getUserTickets(userId)
-    tickets.value = ticketsForPurchase(userTickets, emitted)
+    tickets.value = selectPurchaseTickets(userTickets, emitted, route.params.purchaseId)
     setMissingTicketsMessage()
   } catch (loadError) {
     ticketError.value = loadError.response?.data?.message ?? loadError.message ?? 'No se pudieron emitir o cargar los tickets.'
