@@ -15,10 +15,13 @@ const occupancy = computed(() => getOccupancy(concert.value))
 
 function formatPrice(value) {
   if (value === null || value === undefined) return '—'
+  return formatNumericPrice(value)
+}
+
+function formatNumericPrice(value) {
   const amount = Number(value)
-  return Number.isFinite(amount)
-    ? new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(amount)
-    : value
+  if (!Number.isFinite(amount)) return value
+  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(amount)
 }
 
 async function loadConcert() {

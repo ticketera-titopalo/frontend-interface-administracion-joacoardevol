@@ -5,6 +5,10 @@ let demoProfile = null
 
 function currentDemoProfile(authUser = {}) {
   if (demoProfile) return demoProfile
+  return mergeProfileDefaults(authUser)
+}
+
+function mergeProfileDefaults(authUser) {
   const defaults = { id: 'demo-user-1', name: 'Administrador Demo', email: 'admin@ticketera.demo', phone: '', photo: '' }
   return Object.fromEntries(Object.entries(defaults).map(([key, fallback]) => [key, authUser[key] ?? fallback]))
 }

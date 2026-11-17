@@ -12,7 +12,15 @@ export class PurchaseError extends Error {
 
 function isInsufficientStock(data = {}, message = '') {
   const stockMessage = /insufficient stock|stock insuficiente|not enough stock/i.test(message)
-  return Boolean(data.stock_insufficient) || data.code === 'INSUFFICIENT_STOCK' || stockMessage
+  return hasStockFlag(data) || hasStockCode(data) || stockMessage
+}
+
+function hasStockFlag(data) {
+  return Boolean(data.stock_insufficient)
+}
+
+function hasStockCode(data) {
+  return data.code === 'INSUFFICIENT_STOCK'
 }
 
 function purchaseFromResponse(data) {
@@ -35,11 +43,28 @@ function isStockConflict(conflict, data, message) {
 
 async function createDemoPurchase({ concert_id, quantity, user_id }) {
   const concert = await getConcertById(concert_id)
-  const stock = Number(getConcertValue(concert, 'availableStock', 'available_stock', 'stockAvailable', 'stock_available', 'stock') ?? 0)
-  if (quantity > stock) throw new PurchaseError('No hay suficientes entradas disponibles para esa cantidad.', 'stock')
-  concert.availableStock = stock - quantity
-  concert.ticketsSold = Number(getConcertValue(concert, 'ticketsSold', 'tickets_sold', 'soldTickets', 'sold_tickets', 'sold') ?? 0) + quantity
+  applyDemoSale(concert, quantity)
   return { id: `demo-${Date.now()}`, concert_id, quantity, user_id }
+}
+
+function applyDemoSale(concert, quantity) {
+  const stock = getConcertStock(concert)
+  ensureDemoStock(stock, quantity)
+  concert.availableStock = stock - quantity
+  concert.ticketsSold = getSoldCount(concert) + quantity
+}
+
+function getConcertStock(concert) {
+  return Number(getConcertValue(concert, 'availableStock', 'available_stock', 'stockAvailable', 'stock_available', 'stock') ?? 0)
+}
+
+function getSoldCount(concert) {
+  return Number(getConcertValue(concert, 'ticketsSold', 'tickets_sold', 'soldTickets', 'sold_tickets', 'sold') ?? 0)
+}
+
+function ensureDemoStock(stock, quantity) {
+  if (quantity <= stock) return
+  throw new PurchaseError('No hay suficientes entradas disponibles para esa cantidad.', 'stock')
 }
 
 async function createRemotePurchase(input) {

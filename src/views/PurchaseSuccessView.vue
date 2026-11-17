@@ -40,6 +40,10 @@ function shouldEmitTickets(emitted) {
   return route.query.emit === '1' && emitted === null
 }
 
+function storeTickets(ticketsToStore) {
+  localStorage.setItem(cacheKey, JSON.stringify(ticketsToStore))
+}
+
 function setMissingTicketsMessage() {
   const noTickets = tickets.value.length === 0
   const emissionRequested = route.query.emit === '1'
@@ -68,7 +72,7 @@ async function loadTickets() {
 
     if (shouldEmitTickets(emitted)) {
       emitted = await emitPurchaseTickets(route.params.purchaseId, quantity.value, userId)
-      localStorage.setItem(cacheKey, JSON.stringify(emitted))
+      storeTickets(emitted)
     }
 
     const userTickets = await getUserTickets(userId)

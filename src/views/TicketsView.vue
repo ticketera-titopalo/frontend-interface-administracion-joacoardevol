@@ -16,12 +16,16 @@ function currentUserId() {
   return getSessionUserId(auth.user, isDemo)
 }
 
+function missingUserError() {
+  return new Error('No se encontró el identificador de usuario de la sesión.')
+}
+
 async function loadTickets() {
   loading.value = true
   error.value = ''
   try {
     const userId = currentUserId()
-    if (!userId) throw new Error('No se encontró el identificador de usuario de la sesión.')
+    if (!userId) throw missingUserError()
     tickets.value = await getUserTickets(userId)
   } catch (loadError) {
     error.value = errorMessage(loadError, 'No se pudieron cargar tus tickets.')

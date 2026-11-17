@@ -13,7 +13,12 @@ const demoConcerts = [
 
 function unwrapConcerts(payload) {
   const paths = ['', 'concerts', 'items', 'data', 'data.concerts', 'data.items']
-  return paths.map((path) => path ? firstValue(payload, [path]) : payload).find(Array.isArray) || []
+  const collections = paths.map((path) => resolveConcertCollection(payload, path))
+  return collections.find(Array.isArray) || []
+}
+
+function resolveConcertCollection(payload, path) {
+  return path ? firstValue(payload, [path]) : payload
 }
 
 export async function getConcerts() {

@@ -14,10 +14,14 @@ function readDemoTickets() {
 
 function unwrapTickets(payload) {
   const collections = ['', 'tickets', 'items', 'data', 'data.tickets']
-    .map((path) => path ? firstValue(payload, [path]) : payload)
+    .map((path) => resolveTicketCollection(payload, path))
   const collection = collections.find(Array.isArray)
   if (collection) return collection
   return wrapSingleTicket(payload)
+}
+
+function resolveTicketCollection(payload, path) {
+  return path ? firstValue(payload, [path]) : payload
 }
 
 function wrapSingleTicket(payload) {
@@ -59,8 +63,24 @@ export function getTicketValue(ticket, ...keys) {
 
 export function isTicketUsed(ticket) {
   const used = getTicketValue(ticket, 'used', 'is_used', 'isUsed')
-  if ([true, 1, '1', 'true'].includes(used)) return true
-  if ([false, 0, '0', 'false'].includes(used)) return false
+  return resolveTicketUsage(used, ticket)
+}
+
+function resolveTicketUsage(used, ticket) {
+  if (isExplicitlyUsed(used)) return true
+  if (isExplicitlyUnused(used)) return false
+  return isUsedStatus(ticket)
+}
+
+function isExplicitlyUsed(value) {
+  return [true, 1, '1', 'true'].includes(value)
+}
+
+function isExplicitlyUnused(value) {
+  return [false, 0, '0', 'false'].includes(value)
+}
+
+function isUsedStatus(ticket) {
   const status = String(getTicketValue(ticket, 'status', 'estado') ?? '').toLocaleLowerCase()
   return USED_STATUSES.has(status)
 }
