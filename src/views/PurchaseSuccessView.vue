@@ -1,9 +1,11 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
+import { errorMessage } from '../utils/apiResponse'
 import { RouterLink, useRoute } from 'vue-router'
 import { getConcertById, getConcertValue } from '../api/concerts'
 import { emitPurchaseTickets, getTicketValue, getUserTickets, isTicketUsed, selectPurchaseTickets } from '../api/tickets'
 import { useAuthStore } from '../store/auth'
+import { getSessionUserId } from '../utils/session'
 
 const route = useRoute()
 const auth = useAuthStore()
@@ -23,7 +25,7 @@ function formatPrice(value) {
 const cacheKey = `ticketera_purchase_tickets_${route.params.purchaseId}`
 
 function currentUserId() {
-  return auth.user?.id ?? auth.user?._id ?? (isDemo ? 'demo-user-1' : null)
+  return getSessionUserId(auth.user, isDemo)
 }
 
 function readCachedTickets() {
@@ -73,7 +75,7 @@ async function loadTickets() {
     tickets.value = selectPurchaseTickets(userTickets, emitted, route.params.purchaseId)
     setMissingTicketsMessage()
   } catch (loadError) {
-    ticketError.value = loadError.response?.data?.message ?? loadError.message ?? 'No se pudieron emitir o cargar los tickets.'
+    ticketError.value = errorMessage(loadError, 'No se pudieron emitir o cargar los tickets.')
   } finally {
     loadingTickets.value = false
   }
@@ -116,26 +118,4 @@ onMounted(() => {
   </section>
 </template>
 
-<style scoped>
-.success-page { display: grid; max-width: 680px; place-items: start stretch; }
-.success-card { padding: 2.2rem; border: 1px solid #e7ebf2; border-radius: 8px; background: #fff; text-align: center; box-shadow: 0 1px 3px #1c2b4508; }
-.success-icon { display: grid; width: 3rem; height: 3rem; place-items: center; margin: 0 auto 1.1rem; border-radius: 50%; color: #218268; background: #e6f6ef; font-size: 1.35rem; font-weight: 700; }
-.eyebrow { margin: 0 0 0.35rem; color: #28836c; font-size: 0.63rem; font-weight: 700; letter-spacing: 0.11em; }
-h1 { margin: 0; color: #1e293b; font-size: 1.45rem; font-weight: 650; letter-spacing: -0.04em; }
-.intro { margin: 0.45rem 0 1.5rem; color: #7b8798; font-size: 0.82rem; }
-.purchase-details { display: grid; gap: 0.65rem; margin: 0; padding: 1rem; border: 1px solid #edf0f4; border-radius: 6px; background: #fcfdff; text-align: left; }
-.purchase-details div { display: flex; justify-content: space-between; gap: 1rem; }
-dt { color: #8994a6; font-size: 0.72rem; } dd { margin: 0; color: #344158; font-size: 0.74rem; font-weight: 600; text-align: right; }
-.issued-section { margin-top: 1rem; border: 1px solid #edf0f4; border-radius: 6px; text-align: left; }
-.issued-heading { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 0.9rem; border-bottom: 1px solid #edf0f4; }
-.issued-heading h2 { margin: 0; color: #344158; font-size: 0.78rem; font-weight: 650; }.issued-heading p { margin: 0.2rem 0 0; color: #8994a6; font-size: 0.67rem; }
-.demo-label { padding: 0.25rem 0.4rem; border-radius: 4px; color: #806327; background: #fff5df; font-size: 0.57rem; font-weight: 700; letter-spacing: 0.06em; }
-.issued-list { display: grid; }.issued-ticket { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 0.9rem; border-bottom: 1px solid #f0f2f6; }.issued-ticket:last-child { border-bottom: 0; }
-.issued-ticket > div { display: grid; gap: 0.3rem; }.ticket-label { color: #8994a6; font-size: 0.57rem; font-weight: 700; letter-spacing: 0.07em; }
-.issued-ticket code { color: #435aaf; font-size: 0.72rem; }
-.ticket-status { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.65rem; white-space: nowrap; }.ticket-status i { width: 0.35rem; height: 0.35rem; border-radius: 50%; }.ticket-status.valid { color: #248267; }.ticket-status.valid i { background: #42ad8b; }.ticket-status.used { color: #778196; }.ticket-status.used i { background: #9aa4b3; }
-.ticket-message { margin: 0; padding: 1rem; color: #78859a; font-size: 0.72rem; }.ticket-error { color: #a64b4b; }.ticket-message button { margin-left: 0.5rem; border: 0; color: #425fca; background: transparent; cursor: pointer; }.ticket-warning { margin: 0; padding: 0.5rem 0.9rem; color: #a16a23; font-size: 0.68rem; }
-.primary-button { display: inline-flex; min-height: 2.7rem; align-items: center; justify-content: center; margin-top: 1.2rem; padding: 0 1rem; border-radius: 5px; color: #fff; background: #425fca; font-size: 0.78rem; font-weight: 600; text-decoration: none; }
-.primary-button:hover { background: #344fae; }
-@media (max-width: 520px) { .success-card { padding: 1.3rem; } h1 { font-size: 1.25rem; } }
-</style>
+<style scoped src="./PurchaseSuccessView.css"></style>

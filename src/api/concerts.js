@@ -1,4 +1,5 @@
 import api from './index'
+import { firstValue } from '../utils/apiResponse'
 
 const demoConcerts = [
   { id: 1, title: 'Noche de Rock', artist: 'Los Satélites', description: 'Una noche para disfrutar los clásicos del rock nacional en vivo, con invitados especiales y una puesta de luces inmersiva.', price: 18500, availableStock: 142, ticketsSold: 358, capacity: 500, date: '18 dic 2026', venue: 'Estadio Central' },
@@ -11,15 +12,8 @@ const demoConcerts = [
 ]
 
 function unwrapConcerts(payload) {
-  const collections = [
-    payload,
-    payload?.concerts,
-    payload?.items,
-    payload?.data,
-    payload?.data?.concerts,
-    payload?.data?.items,
-  ]
-  return collections.find(Array.isArray) ?? []
+  const paths = ['', 'concerts', 'items', 'data', 'data.concerts', 'data.items']
+  return paths.map((path) => path ? firstValue(payload, [path]) : payload).find(Array.isArray) || []
 }
 
 export async function getConcerts() {
@@ -29,20 +23,17 @@ export async function getConcerts() {
 }
 
 export async function getConcertById(id) {
-  if (import.meta.env.VITE_DEMO_MODE === 'true') {
-    const concert = demoConcerts.find((item) => String(item.id) === String(id))
-    if (!concert) throw new Error('No se encontró el concierto solicitado.')
-    return concert
-  }
-
+  if (import.meta.env.VITE_DEMO_MODE === 'true') return findDemoConcert(id)
   const { data } = await api.get(`/api/concerts/${encodeURIComponent(id)}`)
-  return data?.concert ?? data?.data ?? data
+  return firstValue(data, ['concert', 'data'], data)
+}
+
+function findDemoConcert(id) {
+  const concert = demoConcerts.find((item) => String(item.id) === String(id))
+  if (concert) return concert
+  throw new Error('No se encontró el concierto solicitado.')
 }
 
 export function getConcertValue(concert, ...keys) {
-  for (const key of keys) {
-    const value = key.split('.').reduce((current, part) => current?.[part], concert)
-    if (value !== undefined && value !== null && value !== '') return value
-  }
-  return null
+  return firstValue(concert, keys)
 }

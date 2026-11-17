@@ -1,4 +1,5 @@
 import api from './index'
+import { firstValue } from '../utils/apiResponse'
 
 const DEMO_TICKETS_KEY = 'ticketera_demo_tickets'
 const USED_STATUSES = new Set(['used', 'usado', 'utilizado'])
@@ -12,12 +13,17 @@ function readDemoTickets() {
 }
 
 function unwrapTickets(payload) {
-  const collections = [payload, payload?.tickets, payload?.items, payload?.data, payload?.data?.tickets]
+  const collections = ['', 'tickets', 'items', 'data', 'data.tickets']
+    .map((path) => path ? firstValue(payload, [path]) : payload)
   const collection = collections.find(Array.isArray)
   if (collection) return collection
+  return wrapSingleTicket(payload)
+}
 
-  if (payload?.ticket && typeof payload.ticket === 'object') return [payload.ticket]
-  return payload?.code || payload?.ticket_code || payload?.codigo ? [payload] : []
+function wrapSingleTicket(payload) {
+  const ticket = firstValue(payload, ['ticket'])
+  if (ticket && typeof ticket === 'object') return [ticket]
+  return firstValue(payload, ['code', 'ticket_code', 'codigo']) ? [payload] : []
 }
 
 export async function emitPurchaseTickets(purchaseId, quantity = 1, userId = 'demo-user-1') {
@@ -48,11 +54,7 @@ export async function getUserTickets(userId) {
 }
 
 export function getTicketValue(ticket, ...keys) {
-  for (const key of keys) {
-    const value = key.split('.').reduce((current, part) => current?.[part], ticket)
-    if (value !== undefined && value !== null && value !== '') return value
-  }
-  return null
+  return firstValue(ticket, keys)
 }
 
 export function isTicketUsed(ticket) {
