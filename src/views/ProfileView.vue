@@ -44,6 +44,10 @@ const fieldErrors = computed(() => ({
   photo: validatePhoto(profile.photo),
 }))
 
+function hasProfileErrors() {
+  return Object.values(fieldErrors.value).some(Boolean)
+}
+
 async function loadProfile() {
   loading.value = true
   error.value = ''
@@ -60,7 +64,7 @@ async function loadProfile() {
 
 async function saveProfile() {
   Object.keys(touched).forEach((key) => { touched[key] = true })
-  if (Object.values(fieldErrors.value).some(Boolean)) return
+  if (hasProfileErrors()) return
   saving.value = true
   error.value = ''
   success.value = ''

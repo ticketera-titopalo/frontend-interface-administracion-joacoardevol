@@ -18,7 +18,15 @@ const passwordTouched = ref(false)
 function validateEmail(value) {
   if (!emailTouched.value) return ''
   if (!value) return 'Ingresa tu correo electrónico.'
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Ingresa un correo electrónico válido.'
+  return isValidEmail(value) ? '' : 'Ingresa un correo electrónico válido.'
+}
+
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+}
+
+function loginRedirect() {
+  return typeof route.query.redirect === 'string' ? route.query.redirect : '/'
 }
 
 const emailError = computed(() => {
@@ -35,8 +43,7 @@ async function submitLogin() {
   submitting.value = true
   try {
     await auth.login({ email: email.value, password: password.value })
-    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/'
-    await router.replace(redirect)
+    await router.replace(loginRedirect())
   } catch (loginError) {
     error.value = errorMessage(loginError, 'No se pudo iniciar sesión.')
   } finally {

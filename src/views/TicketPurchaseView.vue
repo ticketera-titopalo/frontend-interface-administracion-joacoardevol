@@ -38,8 +38,12 @@ async function loadConcert() {
 }
 
 function validatePurchase() {
-  if (quantity.value < 1 || quantity.value > stock.value) return `Stock insuficiente. Quedan ${stock.value} entradas disponibles.`
+  if (isQuantityUnavailable()) return `Stock insuficiente. Quedan ${stock.value} entradas disponibles.`
   return getSessionUserId(auth.user) ? '' : 'No se encontró el usuario de la sesión. Vuelve a iniciar sesión.'
+}
+
+function isQuantityUnavailable() {
+  return quantity.value < 1 || quantity.value > stock.value
 }
 
 function purchaseFailureMessage(failure) {

@@ -13,8 +13,10 @@ const newPasswordError = computed(() => newPassword.value.length > 0 && newPassw
 const confirmPasswordError = computed(() => confirmPassword.value && confirmPassword.value !== newPassword.value ? 'Las contraseñas no coinciden.' : '')
 
 function passwordChangeError() {
-  if (newPasswordError.value) return newPasswordError.value
-  if (confirmPasswordError.value) return confirmPasswordError.value
+  return newPasswordError.value || confirmPasswordError.value || missingConfirmationError()
+}
+
+function missingConfirmationError() {
   return confirmPassword.value ? '' : 'Confirma la nueva contraseña.'
 }
 
