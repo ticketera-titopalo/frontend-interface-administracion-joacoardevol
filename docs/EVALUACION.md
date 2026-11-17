@@ -3,18 +3,18 @@
 
 > Documento **generado automáticamente** por la cátedra de Programación III (RepoSense + análisis de calidad + constancia). **No editar a mano**: se regenera en cada evaluación.
 > Rama evaluada: `main`. Análisis **heurístico** (regex + métricas): es una criba para orientar la revisión, **no una nota**.
-> Generado: 2026-11-16.
+> Generado: 2026-11-17.
 
 ## 1. Veredicto
 
 | Aspecto | Resultado |
 |---|---|
 | Tipo de proyecto | frontend |
-| Índice de calidad de servicios | **42/100** (mínimo 50) |
+| Índice de calidad de servicios | **44/100** (mínimo 50) |
 | Criterios cumplidos | **12/14** |
 | Aprobado (semáforo) | **NO** |
-| Código (LOC) | 1,772 |
-| Archivos de código | 33 |
+| Código (LOC) | 1,783 |
+| Archivos de código | 34 |
 | Tests (archivos) | 0 |
 | Cobertura de líneas | no aplica (frontend sin herramienta de cobertura E2E) |
 | Capas detectadas | vistas, servicios, estado |
@@ -26,12 +26,12 @@
 
 | Autor | Commits | Código (LOC) | Tests (LOC) | Docs (LOC) | Días activos | % del código |
 |---|---:|---:|---:|---:|---:|---:|
-| joacoardevol | 10 | 2,087 | 0 | 38 | 2 | 100% |
-| joaquin ardevol | 0 | 0 | 0 | 0 | 2 | 0% |
+| joacoardevol | 10 | 2,058 | 0 | 38 | 2 | 98% |
+| joaquin ardevol | 1 | 42 | 0 | 0 | 4 | 2% |
 
 > _El LOC de autoría lo calcula RepoSense sobre el historial y puede diferir del LOC de código del análisis de calidad (que mira solo el estado de `main`)._
 
-> **Reparto del trabajo:** joacoardevol concentra el 100% de las líneas de código. Un reparto muy desigual suele indicar que la integración no fue realmente en equipo; vale la pena reconstruir cómo se coordinó.
+> **Reparto del trabajo:** joacoardevol concentra el 98% de las líneas de código. Un reparto muy desigual suele indicar que la integración no fue realmente en equipo; vale la pena reconstruir cómo se coordinó.
 
 ## 3. Constancia (IC) — todas las ramas
 
@@ -39,7 +39,7 @@
 
 | Alumno | Sesiones | Cumplimiento | Pausa | Recencia | IC | Nivel | Para subir de nivel |
 |---|--:|--:|--:|--:|--:|--|--|
-| joaquin ardevol | 10 | 37% | 42 d | 93% | **37** | No aprueba | Cumplimiento 37% (mín. 50%) |
+| joaquin ardevol | 11 | 41% | 42 d | 100% | **40** | No aprueba | Cumplimiento 41% (mín. 50%) |
 | joaquin ardevol | — | — | — | — | — | — | sin datos de IC |
 
 > Para aprobar el IC: **2 sesiones por semana** sostenidas, sin pausas mayores a **10 días** y con actividad en las **últimas 2 semanas**. Se excluyen merges, bots y al docente. Zona horaria UTC-3.
@@ -52,7 +52,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Un resumen numérico (0-100) que combina todas las señales y métricas del análisis, con topes duros por duplicación.
 - **Por qué importa:** Ordena y prioriza la revisión: un índice bajo indica varias señales que conviene mirar juntas.
-- **Tu resultado:** índice **42/100** _(mínimo 50)_
+- **Tu resultado:** índice **44/100** _(mínimo 50)_
 - **Para investigar la causa:**
     - ¿En qué momento del proyecto se concentraron los problemas (arranque, integración de partes, cierre)?
     - ¿El índice bajó por muchas señales chicas o por una o dos graves?
@@ -116,7 +116,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Complejidad ciclomática: cantidad de caminos posibles dentro de una función (condicionales, bucles, casos).
 - **Por qué importa:** Muchos caminos = difícil de seguir y de probar; suelen esconderse casos sin cubrir.
-- **Tu resultado:** **20** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 1772 LOC))_
+- **Tu resultado:** **19** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 1783 LOC))_
 - **Para investigar la causa:**
     - ¿Se agregaron condiciones a medida que aparecían casos nuevos?
     - ¿Se probaron todos los caminos o solo el caso principal?
@@ -146,8 +146,8 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 
 | Criterio | Resultado actual | Meta | Brecha | Cómo alcanzarlo |
 |---|---|---|---|---|
-| Índice de calidad de servicios (indice) | índice **42/100** | mínimo 50 | faltan 8 pts | El índice sólo penaliza lo que **excede** los umbrales de cada criterio: si tenés todo en verde, el índice es 100. Si está en rojo, mirá la columna **Brecha** y los criterios en rojo; corregí primero duplicación, SEC, SQL y capas. Meta del perfil exigente: ≥50. |
-| Complejidad alta (Compl) | **20** bloque(s) de complejidad alta | máximo 5 por 1000 LOC (tenés 1772 LOC) | 20 hallazgo(s); el máximo para 1,772 LOC es 8.9 | Extraé condiciones y ramas a funciones con nombre propio, usá retornos tempranos y evitá anidar `if`/`switch`. Meta: ≤5 bloques por 1000 LOC. |
+| Índice de calidad de servicios (indice) | índice **44/100** | mínimo 50 | faltan 6 pts | El índice sólo penaliza lo que **excede** los umbrales de cada criterio: si tenés todo en verde, el índice es 100. Si está en rojo, mirá la columna **Brecha** y los criterios en rojo; corregí primero duplicación, SEC, SQL y capas. Meta del perfil exigente: ≥50. |
+| Complejidad alta (Compl) | **19** bloque(s) de complejidad alta | máximo 5 por 1000 LOC (tenés 1783 LOC) | 19 hallazgo(s); el máximo para 1,783 LOC es 8.9 | Extraé condiciones y ramas a funciones con nombre propio, usá retornos tempranos y evitá anidar `if`/`switch`. Meta: ≤5 bloques por 1000 LOC. |
 
 > Empezá por las señales de seguridad (**SEC**, **SQL**) y por la **duplicación**: son las que más pesan en el índice y las más rápidas de verificar a ojo. Después de corregir, volvé a correr la medición: el semáforo se recalcula sobre `main`.
 
@@ -191,11 +191,12 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 | 2026-11-11 | **Sí** | frontend-interface-administracion-joacoardevol | 9 / 8 |
 | 2026-11-13 | **Sí** | frontend-interface-administracion-joacoardevol | 1 / 1 |
 
-**Fuera de clase:** 1 fecha(s) con actividad · 2 commits · 2 merges
+**Fuera de clase:** 2 fecha(s) con actividad · 4 commits · 4 merges
 
 | Fecha | Repositorios | Commits / merges |
 |---|---|--:|
-| 2026-11-15 | frontend-interface-administracion-joacoardevol, frontend_interface-client-JoacoArdevol | 2 / 2 |
+| 2026-11-15 | frontend-interface-administracion-joacoardevol, frontend_interface-client-JoacoArdevol | 2 / 0 |
+| 2026-11-16 | frontend-interface-administracion-joacoardevol, frontend_interface-client-JoacoArdevol | 2 / 4 |
 
 ### palojunent
 
