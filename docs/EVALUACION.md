@@ -3,19 +3,19 @@
 
 > Documento **generado automáticamente** por la cátedra de Programación III (RepoSense + análisis de calidad + constancia). **No editar a mano**: se regenera en cada evaluación.
 > Rama evaluada: `main`. Análisis **heurístico** (regex + métricas): es una criba para orientar la revisión, **no una nota**.
-> Generado: 2026-11-17.
+> Generado: 2026-11-18.
 
 ## 1. Veredicto
 
 | Aspecto | Resultado |
 |---|---|
 | Tipo de proyecto | frontend |
-| Índice de calidad de servicios | **44/100** (mínimo 50) |
-| Criterios cumplidos | **12/14** |
-| Aprobado (semáforo) | **NO** |
-| Código (LOC) | 1,783 |
-| Archivos de código | 34 |
-| Tests (archivos) | 0 |
+| Índice de calidad de servicios | **100/100** (mínimo 50) |
+| Criterios cumplidos | **14/14** |
+| Aprobado (semáforo) | **SI** |
+| Código (LOC) | 1,744 |
+| Archivos de código | 36 |
+| Tests (archivos) | 14 |
 | Cobertura de líneas | no aplica (frontend sin herramienta de cobertura E2E) |
 | Capas detectadas | vistas, servicios, estado |
 | Pushes directos a `main` (sin PR) | 0 |
@@ -26,12 +26,12 @@
 
 | Autor | Commits | Código (LOC) | Tests (LOC) | Docs (LOC) | Días activos | % del código |
 |---|---:|---:|---:|---:|---:|---:|
-| joacoardevol | 10 | 2,058 | 0 | 38 | 2 | 98% |
-| joaquin ardevol | 1 | 42 | 0 | 0 | 4 | 2% |
+| joacoardevol | 10 | 1,797 | 0 | 38 | 2 | 81% |
+| joaquin ardevol | 3 | 425 | 681 | 0 | 5 | 19% |
 
 > _El LOC de autoría lo calcula RepoSense sobre el historial y puede diferir del LOC de código del análisis de calidad (que mira solo el estado de `main`)._
 
-> **Reparto del trabajo:** joacoardevol concentra el 98% de las líneas de código. Un reparto muy desigual suele indicar que la integración no fue realmente en equipo; vale la pena reconstruir cómo se coordinó.
+> **Reparto del trabajo:** joacoardevol concentra el 81% de las líneas de código. Un reparto muy desigual suele indicar que la integración no fue realmente en equipo; vale la pena reconstruir cómo se coordinó.
 
 ## 3. Constancia (IC) — todas las ramas
 
@@ -39,7 +39,7 @@
 
 | Alumno | Sesiones | Cumplimiento | Pausa | Recencia | IC | Nivel | Para subir de nivel |
 |---|--:|--:|--:|--:|--:|--|--|
-| joaquin ardevol | 11 | 41% | 42 d | 100% | **40** | No aprueba | Cumplimiento 41% (mín. 50%) |
+| joaquin ardevol | 12 | 43% | 42 d | 93% | **41** | No aprueba | Cumplimiento 43% (mín. 50%) |
 | joaquin ardevol | — | — | — | — | — | — | sin datos de IC |
 
 > Para aprobar el IC: **2 sesiones por semana** sostenidas, sin pausas mayores a **10 días** y con actividad en las **últimas 2 semanas**. Se excluyen merges, bots y al docente. Zona horaria UTC-3.
@@ -48,21 +48,17 @@
 
 Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuando el resultado está en rojo, se agregan preguntas para **investigar la causa** (no hay recetas: entender el porqué es parte de la evaluación).
 
-### 1. Índice de calidad de servicios (indice) — A REVISAR
+### 1. Índice de calidad de servicios (indice) — OK
 
 - **Qué mide:** Un resumen numérico (0-100) que combina todas las señales y métricas del análisis, con topes duros por duplicación.
 - **Por qué importa:** Ordena y prioriza la revisión: un índice bajo indica varias señales que conviene mirar juntas.
-- **Tu resultado:** índice **44/100** _(mínimo 50)_
-- **Para investigar la causa:**
-    - ¿En qué momento del proyecto se concentraron los problemas (arranque, integración de partes, cierre)?
-    - ¿El índice bajó por muchas señales chicas o por una o dos graves?
-    - ¿Se revisó el código integrado después de unir el trabajo de cada integrante?
+- **Tu resultado:** índice **100/100** _(mínimo 50)_
 
 ### 2. Duplicación (DRY) (duplicacion) — OK
 
 - **Qué mide:** Porcentaje de bloques de código repetidos (similitud) en el repositorio.
 - **Por qué importa:** Cada copia se mantiene por separado: un arreglo hay que repetirlo y los defectos se multiplican.
-- **Tu resultado:** **2.0%** de duplicación _(máximo 15%)_
+- **Tu resultado:** **0.0%** de duplicación _(máximo 15%)_
 
 ### 3. Secretos hardcodeados (SEC) — OK
 
@@ -112,15 +108,11 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 - **Por qué importa:** Una unidad que cambia por motivos distintos es frágil y cuesta entenderla.
 - **Tu resultado:** **0** unidad(es) con baja cohesión _(máximo 0)_
 
-### 11. Complejidad alta (Compl) — A REVISAR
+### 11. Complejidad alta (Compl) — OK
 
 - **Qué mide:** Complejidad ciclomática: cantidad de caminos posibles dentro de una función (condicionales, bucles, casos).
 - **Por qué importa:** Muchos caminos = difícil de seguir y de probar; suelen esconderse casos sin cubrir.
-- **Tu resultado:** **19** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 1783 LOC))_
-- **Para investigar la causa:**
-    - ¿Se agregaron condiciones a medida que aparecían casos nuevos?
-    - ¿Se probaron todos los caminos o solo el caso principal?
-    - ¿Hay reglas de negocio mezcladas con detalles técnicos?
+- **Tu resultado:** **0** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 1744 LOC))_
 
 ### 12. Funciones/métodos largos o con muchos parámetros (Tam) — OK
 
@@ -142,24 +134,15 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 ## 5. Observaciones y qué falta
 
-Criterios que hoy están en rojo y, para cada uno, una explicación breve de **cómo corregirlo** hasta alcanzar el nivel de aprobación (perfil `exigente`):
-
-| Criterio | Resultado actual | Meta | Brecha | Cómo alcanzarlo |
-|---|---|---|---|---|
-| Índice de calidad de servicios (indice) | índice **44/100** | mínimo 50 | faltan 6 pts | El índice sólo penaliza lo que **excede** los umbrales de cada criterio: si tenés todo en verde, el índice es 100. Si está en rojo, mirá la columna **Brecha** y los criterios en rojo; corregí primero duplicación, SEC, SQL y capas. Meta del perfil exigente: ≥50. |
-| Complejidad alta (Compl) | **19** bloque(s) de complejidad alta | máximo 5 por 1000 LOC (tenés 1783 LOC) | 19 hallazgo(s); el máximo para 1,783 LOC es 8.9 | Extraé condiciones y ramas a funciones con nombre propio, usá retornos tempranos y evitá anidar `if`/`switch`. Meta: ≤5 bloques por 1000 LOC. |
-
-> Empezá por las señales de seguridad (**SEC**, **SQL**) y por la **duplicación**: son las que más pesan en el índice y las más rápidas de verificar a ojo. Después de corregir, volvé a correr la medición: el semáforo se recalcula sobre `main`.
-
-> **Tests (informativo):** hoy tenés **0** archivo(s) de test; la meta es **5**, pero **no** es una compuerta del semáforo. Para acercarte, agregá tests de los flujos principales (servicios y endpoints) y corré la suite con coverage.
+_Cumple **todos** los criterios del semáforo: no hay nada que arreglar para aprobar. El siguiente objetivo es sostenerlo y mejorar duplicación y diseño._
 
 ## 6. Actividad en clase y fuera de clase
 
-> Se consideran las **27 clases** del período (miércoles y viernes, según `config/constancia.json`; feriados y semanas sin clase descontados). Para cada alumno se muestra la actividad **en cada clase** y también la actividad **fuera de los días de clase** (fines de semana u otros días). `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**.
+> Se consideran las **28 clases** del período (miércoles y viernes, según `config/constancia.json`; feriados y semanas sin clase descontados). Para cada alumno se muestra la actividad **en cada clase** y también la actividad **fuera de los días de clase** (fines de semana u otros días). `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**.
 
 ### joaquin ardevol
 
-**12/27 clases con actividad** · total del período: 30 commits · 29 merges
+**12/28 clases con actividad** · total del período: 30 commits · 29 merges
 
 | Fecha | Actividad | Repositorios | Commits / merges |
 |---|:--:|---|--:|
@@ -190,17 +173,19 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 | 2026-11-06 | **Sí** | frontend_interface-client-JoacoArdevol | 1 / 3 |
 | 2026-11-11 | **Sí** | frontend-interface-administracion-joacoardevol | 9 / 8 |
 | 2026-11-13 | **Sí** | frontend-interface-administracion-joacoardevol | 1 / 1 |
+| 2026-11-18 | No | sin actividad | 0 / 0 |
 
-**Fuera de clase:** 2 fecha(s) con actividad · 4 commits · 4 merges
+**Fuera de clase:** 3 fecha(s) con actividad · 5 commits · 5 merges
 
 | Fecha | Repositorios | Commits / merges |
 |---|---|--:|
 | 2026-11-15 | frontend-interface-administracion-joacoardevol, frontend_interface-client-JoacoArdevol | 2 / 0 |
-| 2026-11-16 | frontend-interface-administracion-joacoardevol, frontend_interface-client-JoacoArdevol | 2 / 4 |
+| 2026-11-16 | frontend-interface-administracion-joacoardevol, frontend_interface-client-JoacoArdevol | 2 / 3 |
+| 2026-11-17 | frontend-interface-administracion-joacoardevol | 1 / 2 |
 
 ### palojunent
 
-**15/27 clases con actividad** · total del período: 43 commits · 32 merges
+**15/28 clases con actividad** · total del período: 43 commits · 32 merges
 
 | Fecha | Actividad | Repositorios | Commits / merges |
 |---|:--:|---|--:|
@@ -231,6 +216,7 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 | 2026-11-06 | **Sí** | backend-interfaz-de-administraci-n-palomajunent | 14 / 8 |
 | 2026-11-11 | **Sí** | backend-interfaz-de-administraci-n-palomajunent | 4 / 4 |
 | 2026-11-13 | **Sí** | backend-interfaz-de-administraci-n-palomajunent | 3 / 1 |
+| 2026-11-18 | No | sin actividad | 0 / 0 |
 
 **Fuera de clase:** 3 fecha(s) con actividad · 5 commits · 10 merges
 
@@ -242,20 +228,7 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 
 ## 7. Anexo: dónde mirar
 
-Archivos donde el análisis encontró cada señal en rojo (sin número de línea, a propósito):
-
-**Complejidad alta (Compl)** — 11 archivo(s):
-- `src/api/concerts.js`
-- `src/api/purchases.js`
-- `src/api/tickets.js`
-- `src/api/users.js`
-- `src/views/ChangePasswordView.vue`
-- `src/views/ConcertDetailView.vue`
-- `src/views/LoginView.vue`
-- `src/views/ProfileView.vue`
-- `src/views/PurchaseSuccessView.vue`
-- `src/views/TicketPurchaseView.vue`
-- `src/views/TicketsView.vue`
+_No hay criterios en rojo con archivos asociados._
 
 ---
 _Informe generado por la cátedra. Los umbrales corresponden al perfil `exigente`. Ante dudas, revisá el archivo señalado y el criterio en `CRITERIOS-CALIDAD.md`._
